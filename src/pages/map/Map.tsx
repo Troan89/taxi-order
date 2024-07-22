@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { setAddress, setCoordinates } from '../../store/OrderSlice';
 import { useAppDispatch, useAppSelector } from '../../store';
-import ManIcon from '../../images/2.gif';
+import ManIcon from '../../images/location.png';
 import taxiIcon from '../../images/1.png';
 
 declare global {
