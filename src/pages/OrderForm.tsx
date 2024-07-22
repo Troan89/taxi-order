@@ -1,4 +1,5 @@
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
+import { debounce } from 'lodash';
 import {setAddress, setCrewId, setCrews, setSourceTime, setCoordinates} from '../store/OrderSlice';
 import {useAppDispatch, useAppSelector} from '../store';
 import {Map} from "./map/Map";
@@ -26,14 +27,20 @@ export const OrderForm = () => {
     const suitableCrew = crews[0];
     const dispatch = useAppDispatch();
 
-    const handleAddressChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        dispatch(setAddress(e.currentTarget.value));
-        const result = await window.ymaps.geocode(e.currentTarget.value);
-        const firstGeoObject = result.geoObjects.get(0);
-        if (firstGeoObject) {
-            const coords = firstGeoObject.geometry.getCoordinates();
-            dispatch(setCoordinates(coords));
-        }
+    const debouncedHandleAddressChange =
+        debounce(async (value: string) => {
+            const result = await window.ymaps.geocode(value);
+            const firstGeoObject = result.geoObjects.get(0);
+            if (firstGeoObject) {
+                const coords = firstGeoObject.geometry.getCoordinates();
+                dispatch(setCoordinates(coords));
+            }
+        }, 3000);
+
+    const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.currentTarget.value;
+        dispatch(setAddress(value));
+        debouncedHandleAddressChange(value);
     };
 
     const handleCrewService = async () => {
