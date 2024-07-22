@@ -1,10 +1,10 @@
 import React from 'react';
 import './CrewList.css'
-import carIcon from "../images/car.jpg";
-import {useAppSelector} from "../store";
+import carIcon from "../../images/car.jpg";
+import {useAppSelector} from "../../store";
 
 export const CrewList = () => {
-    const crews = useAppSelector((state) => state.order.crews.data.crews_info);
+    const crews = useAppSelector((state) => state.order.crews);
 
     return (
         <div className="crews-list">

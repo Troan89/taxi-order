@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from 'react';
-import { setAddress, setCoordinates } from '../store/OrderSlice';
-import { useAppDispatch, useAppSelector } from '../store';
-import ManIcon from '../images/2.gif';
-import taxiIcon from '../images/1.png';
+import { setAddress, setCoordinates } from '../../store/OrderSlice';
+import { useAppDispatch, useAppSelector } from '../../store';
+import ManIcon from '../../images/2.gif';
+import taxiIcon from '../../images/1.png';
 
 declare global {
     interface Window {
@@ -10,9 +10,9 @@ declare global {
     }
 }
 
-export const MapComponent = () => {
+export const Map = () => {
     const dispatch = useAppDispatch();
-    const crews = useAppSelector((state) => state.order.crews.data.crews_info);
+    const crews = useAppSelector((state) => state.order.crews);
     const mapRef = useRef<any>(null);
     const placemarkRef = useRef<any>(null);
     const collectionRef = useRef<any>(null);
@@ -33,8 +33,8 @@ export const MapComponent = () => {
                 });
 
                 placemarkRef.current = new window.ymaps.Placemark([56.839439, 53.218803], {
-                    hintContent: 'Собственный значок метки',
-                    balloonContent: 'Это красивая метка'
+                    hintContent: 'Откуда',
+                    balloonContent: 'Откуда'
                 }, {
                     iconLayout: 'default#image',
                     iconImageHref: ManIcon,
@@ -54,7 +54,7 @@ export const MapComponent = () => {
                                 const firstGeoObject = res.geoObjects.get(0);
                                 if (firstGeoObject) {
                                     const coords = firstGeoObject.geometry.getCoordinates();
-                                    mapRef.current.setCenter(coords, 15); // Устанавливаем центр карты на найденные координаты
+                                    mapRef.current.setCenter(coords, 15);
                                     placemarkRef.current.geometry.setCoordinates(coords);
                                     placemarkRef.current.properties.set({
                                         hintContent: address,
@@ -95,7 +95,6 @@ export const MapComponent = () => {
                 });
             }
 
-            // Инициализируем коллекцию для меток такси
             if (!collectionRef.current) {
                 collectionRef.current = new window.ymaps.GeoObjectCollection();
                 mapRef.current.geoObjects.add(collectionRef.current);
@@ -106,7 +105,9 @@ export const MapComponent = () => {
 
     useEffect(() => {
         if (collectionRef.current) {
-            collectionRef.current.removeAll(); // Удаляем старые метки
+            collectionRef.current.removeAll();
+
+
 
             const myPoints = crews.map((crew) => ({
                 coords: [crew.lat, crew.lon],
